@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-defaults:
-  run:
-    working-directory: ~/go/src/github.com/monzo/typhon
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +16,8 @@ jobs:
     name: Typhon (Go ${{ matrix.go }})
     steps:
       - uses: actions/checkout@v2
+        with:	
+          path: go/src/github.com/monzo/typhon
         
       - name: Setup Go
         uses: actions/setup-go@v2
@@ -30,6 +28,9 @@ jobs:
         run: |
           go version
           go get -v golang.org/x/lint/golint
+        env:
+          GOPATH: /home/runner/work/typhon/typhon/go
+        working-directory: go/src/github.com/monzo/typhon
     
       - name: Lint
         run: |
@@ -38,8 +39,14 @@ jobs:
           echo $GOPATH
           go vet ./...
           golint .
+        env:
+          GOPATH: /home/runner/work/typhon/typhon/go
+        working-directory: go/src/github.com/monzo/typhon
 
       - name: Test
         run: |
           go test -v ./...
           go test -v -test.race ./...
+        env:
+          GOPATH: /home/runner/work/typhon/typhon/go
+        working-directory: go/src/github.com/monzo/typhon
