@@ -1,0 +1,35 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.14', '1.15' ]
+    name: Typhon (Go ${{ matrix.go }})
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+          
+      - name: Install golint
+        run: go get -v golang.org/x/lint/golint
+    
+      - name: Lint
+        run: |
+          go vet ./...
+          golint .
+
+      - name: Test
+        run: |
+          go test -v ./...
+          go test -v -test.race ./...
