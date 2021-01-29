@@ -30,6 +30,9 @@ jobs:
     
       - name: Lint
         run: |
+          pwd
+          echo $PATH
+          echo $GOPATH
           go vet ./...
           golint .
         env:
